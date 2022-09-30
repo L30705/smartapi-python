@@ -222,9 +222,9 @@ class SmartConnect(object):
         """Alias for sending a GET request."""
         return self._request(route, "GET", params)
 
-    def generateSession(self,clientCode,password):
+    def generateSession(self,clientCode,password,totp):
         
-        params={"clientcode":clientCode,"password":password}
+        params={"clientcode":clientCode,"password":password,"totp":totp}
         loginResultObject=self._postRequest("api.login",params)
         
         if loginResultObject['status']==True:
