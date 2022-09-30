@@ -1,3 +1,4 @@
 
 .pypirc
 *.xml
+.idea/smartapi-python.iml
