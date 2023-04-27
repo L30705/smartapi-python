@@ -241,7 +241,7 @@ class SmartConnect(object):
             self.setUserId(id)
             user['data']['jwtToken']="Bearer "+jwtToken
             user['data']['refreshToken']=refreshToken
-
+            user['data']['feedToken'] = feedToken
             
             return user
         else:
