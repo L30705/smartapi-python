@@ -326,6 +326,7 @@ class SmartWebSocketV2(object):
                 print("Error occurred during resubscribe/reconnect:", str(e))
         else:
             print("Connection Close")
+            self.close_connection()
 
     def _on_close(self, wsapp):
         # self.HB_THREAD_FLAG = False
