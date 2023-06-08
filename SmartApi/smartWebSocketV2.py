@@ -135,11 +135,11 @@ class SmartWebSocketV2(object):
                             "WebSocket connection is already closed. Disconnecting WebSocket and attempting to resubscribe...")
                         self.resubscribe()
             except Exception as e:
-                print(f"Error occurred: {str(e)}. Disconnecting WebSocket and attempting to resubscribe...")
+                #print(f"Error occurred: {str(e)}. Disconnecting WebSocket and attempting to resubscribe...")
                 self.wsapp.close()
                 self.resubscribe()
 
-        ping_timer = Timer(10, send_ping)  # Send a ping every 10 seconds
+        ping_timer = Timer(10, send_ping)  # Send timer every 10 seconds
         ping_timer.start()
 
     def subscribe(self, correlation_id, mode, token_list):
@@ -277,7 +277,7 @@ class SmartWebSocketV2(object):
             "x-client-code": self.client_code,
             "x-feed-token": self.feed_token
         }
-        # self.start_ping_timer()
+        
         try:
             self.wsapp = websocket.WebSocketApp(self.ROOT_URI, header=headers, on_open=self._on_open,
                                                 on_error=self._on_error, on_close=self._on_close, on_data=self._on_data,
@@ -285,6 +285,7 @@ class SmartWebSocketV2(object):
                                                 on_pong=self._on_pong)
             self.wsapp.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE}, ping_interval=self.HEART_BEAT_INTERVAL,
                                    ping_payload=self.HEART_BEAT_MESSAGE)
+            # self.start_ping_timer()
         except Exception as e:
             raise e
 
