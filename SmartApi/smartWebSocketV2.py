@@ -18,7 +18,6 @@ class SmartWebSocketV2(object):
     LITTLE_ENDIAN_BYTE_ORDER = "<"
     RESUBSCRIBE_FLAG = False
     # HB_THREAD_FLAG = True
-    MAX_RETRY_ATTEMPT = 1
 
     # Available Actions
     SUBSCRIBE_ACTION = 1
@@ -49,7 +48,7 @@ class SmartWebSocketV2(object):
     input_request_dict = {}
     current_retry_attempt = 0
 
-    def __init__(self, auth_token, api_key, client_code, feed_token):
+    def __init__(self, auth_token, api_key, client_code, feed_token, max_retry_attempt=1):
         """
             Initialise the SmartWebSocketV2 instance
             Parameters
@@ -69,6 +68,7 @@ class SmartWebSocketV2(object):
         self.feed_token = feed_token
         self.DISCONNECT_FLAG = True
         self.last_pong_timestamp = None
+        self.MAX_RETRY_ATTEMPT = max_retry_attempt
 
         if not self._sanity_check():
             raise Exception("Provide valid value for all the tokens")
