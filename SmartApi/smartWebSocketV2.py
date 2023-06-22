@@ -7,6 +7,7 @@ import websocket
 from datetime import datetime, timedelta
 from threading import Timer
 
+
 class SmartWebSocketV2(object):
     """
     SmartAPI Web Socket version 2
@@ -14,7 +15,7 @@ class SmartWebSocketV2(object):
 
     ROOT_URI = "ws://smartapisocket.angelone.in/smart-stream"
     HEART_BEAT_MESSAGE = "ping"
-    HEART_BEAT_INTERVAL = 10     # Adjusted to 10s
+    HEART_BEAT_INTERVAL = 10  # Adjusted to 10s
     LITTLE_ENDIAN_BYTE_ORDER = "<"
     RESUBSCRIBE_FLAG = False
     # HB_THREAD_FLAG = True
@@ -118,28 +119,28 @@ class SmartWebSocketV2(object):
         print(f"In on ping function ==> {data}, Timestamp: {formatted_timestamp}")
         self.last_ping_timestamp = timestamp
 
+    def check_connection_status(self):
+        current_time = time.time()
+        if self.last_pong_timestamp is not None and current_time - self.last_pong_timestamp > 2*self.HEART_BEAT_MESSAGE:
+            # Stale connection detected, take appropriate action
+            self.close_connection()
+            self.connect()
+
     def start_ping_timer(self):
         def send_ping():
             try:
                 current_time = datetime.now()
-                if self.last_pong_timestamp is None or self.last_pong_timestamp < current_time - timedelta(seconds=20):
-                    print("No pong response received. Disconnecting WebSocket and attempting to resubscribe...")
-                    self.wsapp.close()
+                if self.last_pong_timestamp is None or self.last_pong_timestamp < current_time - timedelta(self.HEART_BEAT_MESSAGE):
+                    # print("stale connection detected")
+                    # self.wsapp.close()
                     self.connect()
                 else:
                     self.last_ping_timestamp = time.time()
-                    try:
-                        self.wsapp.send(self.HEART_BEAT_MESSAGE)
-                    except WebSocketConnectionClosedException:
-                        print(
-                            "WebSocket connection is already closed. Disconnecting WebSocket and attempting to resubscribe...")
-                        self.resubscribe()
             except Exception as e:
-                #print(f"Error occurred: {str(e)}. Disconnecting WebSocket and attempting to resubscribe...")
                 self.wsapp.close()
                 self.resubscribe()
 
-        ping_timer = Timer(10, send_ping)  # Send timer every 10 seconds
+        ping_timer = Timer(5, send_ping)
         ping_timer.start()
 
     def subscribe(self, correlation_id, mode, token_list):
@@ -266,7 +267,6 @@ class SmartWebSocketV2(object):
         except Exception as e:
             raise e
 
-
     def connect(self):
         """
             Make the web socket connection with the server
@@ -277,7 +277,7 @@ class SmartWebSocketV2(object):
             "x-client-code": self.client_code,
             "x-feed-token": self.feed_token
         }
-        
+
         try:
             self.wsapp = websocket.WebSocketApp(self.ROOT_URI, header=headers, on_open=self._on_open,
                                                 on_error=self._on_error, on_close=self._on_close, on_data=self._on_data,
@@ -289,12 +289,10 @@ class SmartWebSocketV2(object):
         except Exception as e:
             raise e
 
-
     def close_connection(self):
         """
         Closes the connection
         """
-        # print("Connection Closed")
         self.RESUBSCRIBE_FLAG = False
         self.DISCONNECT_FLAG = True
         # self.HB_THREAD_FLAG = False
@@ -326,7 +324,6 @@ class SmartWebSocketV2(object):
             except Exception as e:
                 print("Error occurred during resubscribe/reconnect:", str(e))
         else:
-            print("Connection Close")
             self.close_connection()
 
     def _on_close(self, wsapp):
@@ -367,8 +364,8 @@ class SmartWebSocketV2(object):
                 parsed_data["52_week_high_price"] = self._unpack_data(binary_data, 363, 371, byte_format="q")[0]
                 parsed_data["52_week_low_price"] = self._unpack_data(binary_data, 371, 379, byte_format="q")[0]
                 best_5_buy_and_sell_data = self._parse_best_5_buy_and_sell_data(binary_data[147:347])
-                parsed_data["best_5_buy_data"] = best_5_buy_and_sell_data["best_5_buy_data"]
-                parsed_data["best_5_sell_data"] = best_5_buy_and_sell_data["best_5_sell_data"]
+                parsed_data["best_5_buy_data"] = best_5_buy_and_sell_data["best_5_sell_data"]
+                parsed_data["best_5_sell_data"] = best_5_buy_and_sell_data["best_5_buy_data"]
 
             return parsed_data
         except Exception as e:
@@ -431,7 +428,7 @@ class SmartWebSocketV2(object):
         pass
 
     def on_close(self, wsapp):
-        pass    
+        pass
 
     def on_open(self, wsapp):
         pass
