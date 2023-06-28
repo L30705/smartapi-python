@@ -1,5 +1,6 @@
 # package import statement
-from smartapi import SmartConnect #or from smartapi.smartConnect import SmartConnect
+from SmartApi import SmartConnect #or from smartapi.smartConnect import SmartConnect
+
 #import smartapi.smartExceptions(for smartExceptions)
 
 #create object of call
@@ -7,7 +8,7 @@ obj=SmartConnect(api_key="your api key")
 
 #login api call
 
-data = obj.generateSession("Your Client ID","Your Password")
+data = obj.generateSession("Your Client ID","Your Password","Your totp")
 refreshToken= data['data']['refreshToken']
 
 #fetch the feedtoken
@@ -85,7 +86,8 @@ except Exception as e:
 
 
 ## WebSocket
-from smartapi import WebSocket
+
+from SmartApi.webSocket import WebSocket
 
 FEED_TOKEN= "your feed token"
 CLIENT_CODE="your client Id"
