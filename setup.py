@@ -1,4 +1,3 @@
-
 from setuptools import setup, find_packages
 
 about={}
@@ -13,7 +12,7 @@ requirements = [
 
 setup(
     name="smartapi-python",
-    version="1.2.8",
+    version="1.2.9",
     author="ab-smartapi",
     author_email="smartapi.sdk@gmail.com",
     description="Angel Broking openApi integration",
