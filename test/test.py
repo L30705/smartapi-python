@@ -1,21 +1,25 @@
-from smartapi import SmartConnect
+from logzero import logger
+from SmartApi.smartConnect import SmartConnect
+import pyotp
 
-#---------for smartExceptions---------
-#import smartapi.smartExceptions
-#or
-#from smartapi import smartExceptions
-
-smartApi =SmartConnect(api_key="Your Api Key")
-
-login = smartApi.generateSession('Your Client Id', 'Your Password')
-
-refreshToken = login['data']['refreshToken']
-
+api_key = 'Your Api Key'
+username = 'Your client code'
+pwd = 'Your pin'
+smartApi = SmartConnect(api_key)
+token = "Your QR value"
+totp=pyotp.TOTP(token).now()
+correlation_id = "abcde"
+data = smartApi.generateSession(username, pwd, totp)
+# print(data)
+authToken = data['data']['jwtToken']
+refreshToken = data['data']['refreshToken']
 feedToken = smartApi.getfeedToken()
-
-smartApi.getProfile(refreshToken)
-
+# print("Feed-Token :", feedToken)
+res = smartApi.getProfile(refreshToken)
+# print("Res:", res)
 smartApi.generateToken(refreshToken)
+res=res['data']['exchanges']
+
 
 orderparams = {
     "variety": "NORMAL",
@@ -32,6 +36,7 @@ orderparams = {
     "quantity": "1"
 }
 orderid = smartApi.placeOrder(orderparams)
+print("PlaceOrder", orderid)
 
 modifyparams = {
     "variety": "NORMAL",
@@ -41,106 +46,157 @@ modifyparams = {
     "duration": "DAY",
     "price": "19500",
     "quantity": "1",
-    "tradingsymbol":"SBIN-EQ",
-    "symboltoken":"3045",
-    "exchange":"NSE"
+    "tradingsymbol": "SBIN-EQ",
+    "symboltoken": "3045",
+    "exchange": "NSE"
 }
 smartApi.modifyOrder(modifyparams)
+print("Modify Orders:",modifyparams)
 
 smartApi.cancelOrder(orderid, "NORMAL")
 
-smartApi.orderBook()
+orderbook=smartApi.orderBook()
+print("Order Book :", orderbook)
 
-smartApi.tradeBook()
+tradebook=smartApi.tradeBook()
+print("Trade Book :",tradebook)
 
-smartApi.rmsLimit()
+rmslimit=smartApi.rmsLimit()
+print("RMS Limit :", rmslimit)
 
-smartApi.position()
+pos=smartApi.position()
+print("Position :", pos)
 
-smartApi.holding()
+holdings=smartApi.holding()
+print("Holdings :", holdings)
 
 exchange = "NSE"
 tradingsymbol = "SBIN-EQ"
 symboltoken = 3045
-smartApi.ltpData("NSE", "SBIN-EQ", "3045")
+ltp=smartApi.ltpData("NSE", "SBIN-EQ", "3045")
+print("Ltp Data :", ltp)
 
-params={
+
+params = {
     "exchange": "NSE",
-    "oldproducttype":"DELIVERY",
+    "oldproducttype": "DELIVERY",
     "newproducttype": "MARGIN",
     "tradingsymbol": "SBIN-EQ",
-    "transactiontype":"BUY",
-    "quantity":1,
-    "type":"DAY"
+    "transactiontype": "BUY",
+    "quantity": 1,
+    "type": "DAY"
 
 }
 
-smartApi.convertPosition(params)
-gttCreateParams={
-	    "tradingsymbol" : "SBIN-EQ",
-	    "symboltoken" : "3045",
-	    "exchange" : "NSE", 
-	    "producttype" : "MARGIN",
-	    "transactiontype" : "BUY",
-	    "price" : 100000,
-	    "qty" : 10,
-	    "disclosedqty": 10,
-	    "triggerprice" : 200000,
-	    "timeperiod" : 365
-	}
-rule_id=smartApi.gttCreateRule(gttCreateParams)
+convertposition=smartApi.convertPosition(params)
 
-gttModifyParams={
-		"id": rule_id,
-		"symboltoken":"3045",
-		"exchange":"NSE",
-		"price":19500,
-		"quantity":10,
-		"triggerprice":200000,
-		"disclosedqty":10,
-		"timeperiod":365
-	}
-modified_id=smartApi.gttModifyRule(gttModifyParams)
+gttCreateParams = {
+    "tradingsymbol": "SBIN-EQ",
+    "symboltoken": "3045",
+    "exchange": "NSE",
+    "producttype": "MARGIN",
+    "transactiontype": "BUY",
+    "price": 100000,
+    "qty": 10,
+    "disclosedqty": 10,
+    "triggerprice": 200000,
+    "timeperiod": 365
+}
+rule_id = smartApi.gttCreateRule(gttCreateParams)
+print("Gtt Rule :", rule_id)
 
-cancelParams={
-		"id": rule_id, 
-		"symboltoken":"3045",
-		"exchange":"NSE"
-		}	
-    
-cancelled_id=smartApi.gttCancelRule(cancelParams)
+gttModifyParams = {
+    "id": rule_id,
+    "symboltoken": "3045",
+    "exchange": "NSE",
+    "price": 19500,
+    "quantity": 10,
+    "triggerprice": 200000,
+    "disclosedqty": 10,
+    "timeperiod": 365
+}
+modified_id = smartApi.gttModifyRule(gttModifyParams)
+print("Gtt Modified Rule :", modified_id)
 
-smartApi.gttDetails(rule_id)
+cancelParams = {
+    "id": rule_id,
+    "symboltoken": "3045",
+    "exchange": "NSE"
+}
 
-smartApi.gttLists('List of status','<page>','<count>')
+cancelled_id = smartApi.gttCancelRule(cancelParams)
+print("gtt Cancel Rule :", cancelled_id)
 
-smartApi.terminateSession('Your Client Id')
+gttdetails=smartApi.gttDetails(rule_id)
+print("GTT Details",gttdetails)
 
-## Websocket Programming
+smartApi.gttLists('List of status', '<page>', '<count>')
 
-from smartapi import WebSocket
-import multiprocessing
-import sys
-FEED_TOKEN=feedToken 
-CLIENT_CODE="Your Client Id"
-token=None
-task=None
-ss = WebSocket(FEED_TOKEN, CLIENT_CODE)
-def on_tick(ws, tick):
-    print("Ticks: {}".format(tick))
+candleParams={
+     "exchange": "NSE",
+     "symboltoken": "3045",
+     "interval": "ONE_MINUTE",
+     "fromdate": "2021-02-10 09:15",
+     "todate": "2021-02-10 09:16"
+}
+candledetails=smartApi.getCandleData(candleParams)
+print("Historical Data",candledetails)
 
-def on_connect(ws, response):
-    ws.websocket_connection()
-    ws.send_request(token,task)
+terminate=smartApi.terminateSession('Your client code')
+print("Connection Close",terminate)
 
-def on_close(ws, code, reason):
-    ws.stop()
+# # Websocket Programming
+
+from SmartApi.smartWebSocketV2 import SmartWebSocketV2
+
+AUTH_TOKEN = authToken
+API_KEY = api_key
+CLIENT_CODE = username
+FEED_TOKEN = feedToken
+# correlation_id = "abc123"
+action = 1
+mode = 1
+
+token_list = [
+    {
+        "exchangeType": 1,
+        "tokens": ["26009","1594"]
+    }
+]
+token_list1 = [
+    {
+        "action": 0,
+        "exchangeType": 1,
+        "tokens": ["26009"]
+    }
+]
+
+sws = SmartWebSocketV2(AUTH_TOKEN, API_KEY, CLIENT_CODE, FEED_TOKEN)
+
+def on_data(wsapp, message):
+    logger.info("Ticks: {}".format(message))
+    close_connection()
+
+def on_open(wsapp):
+    logger.info("on open")
+    sws.subscribe(correlation_id, mode, token_list)
+    # sws.unsubscribe(correlation_id, mode, token_list1)
+
+
+def on_error(wsapp, error):
+    logger.error(error)
+
+def on_close(wsapp):
+    logger.info("Close")
+
+def close_connection():
+    sws.close_connection()
+
 
 # Assign the callbacks.
-ss.on_ticks = on_tick
-ss.on_connect = on_connect
-ss.on_close = on_close
+sws.on_open = on_open
+sws.on_data = on_data
+sws.on_error = on_error
+sws.on_close = on_close
 
-p1 = multiprocessing.Process(target = ss.connect())
-sys.exit()
-p1.start()
+sws.connect()
