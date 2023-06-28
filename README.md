@@ -9,6 +9,7 @@ SMARTAPI-PYTHON is a Python library for dealing AMX,that is a set of REST-like H
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install smartapi-python.
 
 ```bash
+pip install -r requirements_dev.txt       # for downloading the other required packages
 pip install smartapi-python
 pip install websocket-client
 ```
