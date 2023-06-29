@@ -216,6 +216,7 @@ class SmartConnect(object):
         """Alias for sending a GET request."""
         return self._request(route, "GET", params)
 
+<<<<<<< HEAD
     def generateSession(self, clientCode, password, totp):
 
         params = {"clientcode": clientCode, "password": password, "totp": totp}
@@ -223,11 +224,21 @@ class SmartConnect(object):
 
         if loginResultObject['status'] == True:
             jwtToken = loginResultObject['data']['jwtToken']
+=======
+    def generateSession(self,clientCode,password,totp):
+        
+        params={"clientcode":clientCode,"password":password,"totp":totp}
+        loginResultObject=self._postRequest("api.login",params)
+        
+        if loginResultObject['status']==True:
+            jwtToken=loginResultObject['data']['jwtToken']
+>>>>>>> upstream/main
             self.setAccessToken(jwtToken)
             refreshToken = loginResultObject['data']['refreshToken']
             feedToken = loginResultObject['data']['feedToken']
             self.setRefreshToken(refreshToken)
             self.setFeedToken(feedToken)
+<<<<<<< HEAD
             user = self.getProfile(refreshToken)
 
             id = user['data']['clientcode']
@@ -237,6 +248,17 @@ class SmartConnect(object):
             user['data']['refreshToken'] = refreshToken
             user['data']['feedToken'] = feedToken
 
+=======
+            user=self.getProfile(refreshToken)
+        
+            id=user['data']['clientcode']
+            #id='D88311'
+            self.setUserId(id)
+            user['data']['jwtToken']="Bearer "+jwtToken
+            user['data']['refreshToken']=refreshToken
+            user['data']['feedToken'] = feedToken
+            
+>>>>>>> upstream/main
             return user
         else:
             return loginResultObject

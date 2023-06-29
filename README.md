@@ -1,14 +1,21 @@
 # SMARTAPI-PYTHON
 
+<<<<<<< HEAD
 SMARTAPI-PYTHON is a Python library for interacting with Angel's Trading platform  ,that is a set of REST-like HTTP APIs that expose many capabilities required to build stock market investment and trading platforms. It lets you execute orders in real time..
 
+=======
+SMARTAPI-PYTHON is a Python library for dealing AMX,that is a set of REST-like HTTP APIs that expose many capabilities required to build stock market investment and trading platforms. It lets you execute orders in real time.
+>>>>>>> upstream/main
 
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install smartapi-python.
 
 ```bash
+<<<<<<< HEAD
 pip install -r requirements_dev.txt       # for downloading the other required packages
+=======
+>>>>>>> upstream/main
 pip install smartapi-python
 pip install websocket-client
 ```
@@ -17,6 +24,7 @@ pip install websocket-client
 
 ```python
 # package import statement
+<<<<<<< HEAD
 from SmartApi import SmartConnect #or from SmartApi.smartConnect import SmartConnect
 import pyotp
 
@@ -44,6 +52,27 @@ smartApi.generateToken(refreshToken)
 res=res['data']['exchanges']
 
 
+=======
+from smartapi import SmartConnect #or from smartapi.smartConnect import SmartConnect
+#import smartapi.smartExceptions(for smartExceptions)
+
+#create object of call
+obj=SmartConnect(api_key="your api key",
+                #optional
+                #access_token = "your access token",
+                #refresh_token = "your refresh_token")
+
+#login api call
+
+data = obj.generateSession("Your Client ID","Your Password","Your totp")
+refreshToken= data['data']['refreshToken']
+
+#fetch the feedtoken
+feedToken=obj.getfeedToken()
+
+#fetch User Profile
+userProfile= obj.getProfile(refreshToken)
+>>>>>>> upstream/main
 #place order
 try:
     orderparams = {
@@ -60,7 +89,11 @@ try:
         "stoploss": "0",
         "quantity": "1"
         }
+<<<<<<< HEAD
     orderId=smartApi.placeOrder(orderparams)
+=======
+    orderId=obj.placeOrder(orderparams)
+>>>>>>> upstream/main
     print("The order id is: {}".format(orderId))
 except Exception as e:
     print("Order placement failed: {}".format(e.message))
@@ -78,7 +111,11 @@ try:
             "triggerprice" : 200000,
             "timeperiod" : 365
         }
+<<<<<<< HEAD
     rule_id=smartApi.gttCreateRule(gttCreateParams)
+=======
+    rule_id=obj.gttCreateRule(gttCreateParams)
+>>>>>>> upstream/main
     print("The GTT rule id is: {}".format(rule_id))
 except Exception as e:
     print("GTT Rule creation failed: {}".format(e.message))
@@ -88,7 +125,11 @@ try:
     status=["FORALL"] #should be a list
     page=1
     count=10
+<<<<<<< HEAD
     lists=smartApi.gttLists(status,page,count)
+=======
+    lists=obj.gttLists(status,page,count)
+>>>>>>> upstream/main
 except Exception as e:
     print("GTT Rule List failed: {}".format(e.message))
 
@@ -101,24 +142,41 @@ try:
     "fromdate": "2021-02-08 09:00", 
     "todate": "2021-02-08 09:16"
     }
+<<<<<<< HEAD
     smartApi.getCandleData(historicParam)
+=======
+    obj.getCandleData(historicParam)
+>>>>>>> upstream/main
 except Exception as e:
     print("Historic Api failed: {}".format(e.message))
 #logout
 try:
+<<<<<<< HEAD
     logout=smartApi.terminateSession('Your Client Id')
     print("Logout Successfull")
 except Exception as e:
     print("Logout failed: {}".format(e.message))
 
+=======
+    logout=obj.terminateSession('Your Client Id')
+    print("Logout Successfull")
+except Exception as e:
+    print("Logout failed: {}".format(e.message))
+>>>>>>> upstream/main
 ```
 
 
 ## Getting started with SmartAPI Websocket's
+<<<<<<< HEAD
 
 ```python
 
 from SmartApi import SmartWebSocket
+=======
+```python
+
+from smartapi import SmartWebSocket
+>>>>>>> upstream/main
 
 # feed_token=092017047
 FEED_TOKEN="YOUR_FEED_TOKEN"
@@ -150,6 +208,7 @@ ss._on_error = on_error
 ss._on_close = on_close
 
 ss.connect()
+<<<<<<< HEAD
 
 
 ####### Websocket sample code ended here #######
@@ -204,4 +263,10 @@ sws.connect()
 ```
 
 
+=======
+```
+
+
+
+>>>>>>> upstream/main
 
