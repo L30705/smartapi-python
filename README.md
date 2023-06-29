@@ -3,7 +3,6 @@
 SMARTAPI-PYTHON is a Python library for interacting with Angel's Trading platform  ,that is a set of REST-like HTTP APIs that expose many capabilities required to build stock market investment and trading platforms. It lets you execute orders in real time.
 
 
-
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install smartapi-python.
