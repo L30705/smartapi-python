@@ -8,11 +8,8 @@ obj=SmartConnect(api_key="your api key")
 
 #login api call
 
-<<<<<<< HEAD
 data = obj.generateSession("Your Client ID","Your Password","Your totp")
-=======
-data = obj.generateSession("Your Client ID","Your Password","Your totp here")
->>>>>>> upstream/main
+
 refreshToken= data['data']['refreshToken']
 
 #fetch the feedtoken
