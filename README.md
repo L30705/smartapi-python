@@ -200,8 +200,3 @@ sws.on_close = on_close
 sws.connect()
 
 ```
-
-
-
->>>>>>> upstream/main
-
