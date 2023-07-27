@@ -1,2 +1,7 @@
 
 .pypirc
+*.xml
+.idea/smartapi-python.iml
+build/*
+smartapi_python.egg-info
+dist/*

@@ -1,7 +1,7 @@
 __title__ = "smartapi-python"
 __description__ = "Angel Broking openApi integration"
 __url__ = "https://www.angelbroking.com/"
-__download_url__ = "https://github.com/angelbroking-github/smartapi-python"
+__download_url__ = "https://github.com/angel-one/smartapi-python"
 __version__ = "1.2.6"
 __author__ = "ab-smartapi"
 __token__ = "ab-smartapi"
